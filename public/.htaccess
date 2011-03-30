@@ -1,0 +1,21 @@
+#provavelmente ja esta ativo. Ainda assim:
+Options +FollowSymlinks
+
+#Com esta definição o nosso application.ini fica setado para development.
+#Na producao mudar-se-a para production (usando capistrano)
+SetEnv APPLICATION_ENV development
+
+#absolutamente necessario para o apache poder fazer os redireccionamentos
+RewriteEngine On
+
+#hotlinking - se as imagens nao vierem de nenhum destes enderecos, nao mostra.
+RewriteCond %{HTTP_REFERER} !^$ [OR]
+RewriteCond %{HTTP_REFERER} !^https?://(www\.)?cloud-k\.dev [NC,OR]
+RewriteCond %{HTTP_REFERER} !^https?://(www\.)?dev\.cloud-k\.pt [NC]
+RewriteRule \.(jpg|jpeg|png|gif)$ - [NC,F,L]
+
+#se o request nao for uma diretoria ou um ficheiro, redirecciona para o index
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^.*$ - [NC,L]
+RewriteRule ^.*$ index.php [NC,L]
